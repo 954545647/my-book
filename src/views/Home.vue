@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div id="read">
-      aaa
+      aaa aa
     </div>
   </div>
 </template>
