@@ -1,6 +1,8 @@
 <template>
   <div class="home">
-    <div id="read"></div>
+    <div id="read">
+      aaa
+    </div>
   </div>
 </template>
 
