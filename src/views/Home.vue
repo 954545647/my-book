@@ -1,8 +1,9 @@
 <template>
   <div class="home">
-    <div id="read">
-      aaa aa
-    </div>
+    <div id="read"></div>
+    <i class="icon-bookmark"></i>
+    <span class="new">5655</span>
+    <span>55554412</span>
   </div>
 </template>
 
@@ -30,3 +31,15 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+@import './../assets/styles/global.scss';
+.new{
+  font-family: 'Days One';
+  font-size: px2rem(12);
+}
+span{
+  font-size: px2rem(20);
+}
+</style>
+
