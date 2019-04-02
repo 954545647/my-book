@@ -1,0 +1,26 @@
+// $ratio是一个基准值,基于什么屏幕
+$ratio : 37.5;  // iPhone4的
+@function px2rem($px){
+    // ($px / $ratio) 计算后是 rem 单位
+    // 1rem等于我们 1 html 的大小, 我们html的大小是动态变化的,所以实现了自适应布局
+    @return $px / $ratio * 1 + rem;
+}
+
+// 水平垂直居中
+@mixin center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+// 向左居中
+@mixin left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+// 向右居中
+@mixin right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
