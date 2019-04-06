@@ -7,10 +7,10 @@ const book = {
     defaultFontSize: 16,  // 默认字体大小
     defaultFontFamily: "Default", // 默认字体类型
     fontFamilyVisible: false, // 字体菜单显示与否
-    defaultTheme: "Default",
-    bookAvailable: false,
-    progress: 0,
-    section: 0,
+    defaultTheme: "Default",  // 默认主题
+    bookAvailable: false, // 书籍是否加载完成
+    progress: 0,    // 当前进度 
+    section: 0,     // 当前章节
     isPaginating: true,
     currentBook: null,  // 当前book实例对象
     navigation: null,
@@ -20,12 +20,17 @@ const book = {
     pagelist: null,
     offsetY: 0,
     isBookmark: null,
+    bookdata: [],  // 书签数组
     // speakingIconBottom: realPx(58)
   },
   mutations: {
     // 设置电子书的路径名
     setFileName(state, newFile) {
       state.fileName = newFile;
+    },
+    // 设置书签数组
+    setBookMark(state,bookdata){
+      state.bookdata = bookdata
     },
     // 设置菜单栏的显示或者隐藏
     setmenuVisible(state, menuVisible) {

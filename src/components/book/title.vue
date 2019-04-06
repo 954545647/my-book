@@ -34,7 +34,7 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 101;
+  z-index: 151;
   width: 100%;
   background: #fff;
   height: px2rem(45);

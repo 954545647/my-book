@@ -1,26 +1,42 @@
 // $ratio是一个基准值,基于什么屏幕
-$ratio : 37.5;  // iPhone4的
-@function px2rem($px){
-    // ($px / $ratio) 计算后是 rem 单位
-    // 1rem等于我们 1 html 的大小, 我们html的大小是动态变化的,所以实现了自适应布局
-    @return $px / $ratio * 1 + rem;
+$ratio: 37.5; // iPhone4的
+@function px2rem($px) {
+  // ($px / $ratio) 计算后是 rem 单位
+  // 1rem等于我们 1 html 的大小, 我们html的大小是动态变化的,所以实现了自适应布局
+  @return $px / $ratio * 1 + rem;
 }
 
 // 水平垂直居中
 @mixin center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 // 向左居中
 @mixin left {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 // 向右居中
 @mixin right {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+// 文字不换行,超出部分隐藏省略号显示
+@mixin ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin ellipsis2($line) {
+  display: -webkit-box; // 不正规属性
+  -webkit-box-orient: vertical; //从上到下排列
+  -webkit-line-clamp: $line; // 显示两列
+  white-space: normal; //正常换行
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all; // 强制换行
 }

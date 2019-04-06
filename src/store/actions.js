@@ -58,6 +58,9 @@ const actions = {
   },
   setSpeakingIconBottom({ commit }, speakingIconBottom) {
     commit("SET_SPEAKING_ICON_BOTTOM", speakingIconBottom);
+  },
+  setBookMark({ commit }, bookdata) {
+    commit("setBookMark", bookdata);
   }
 };
 

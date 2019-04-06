@@ -88,3 +88,18 @@ export function removeCss(href) {
 //   removeCss(`${process.env.VUE_APP_Resource_Url}/theme/theme_Grace.css`);
 //   removeCss(`${process.env.VUE_APP_Resource_Url}/theme/theme_night.css`);
 // }
+
+// 深度扁平化数组
+export function flatten(arr) {
+  return [].concat(
+    ...arr.map(item => {
+      return [].concat(item, ...flatten(item.subitems));
+    })
+  );
+}
+// 浅度扁平化
+// export function flatten(arr) {
+//   return arr.map(item => {
+//     return [].concat(item, ...flatten(item.subitems));
+//   });
+// }

@@ -45,6 +45,21 @@ export function getBookObject(fileName, key) {
   }
 }
 
+// 获取历史搜索内容
+export function getHistorySeach(fileName) {
+  return getBookObject(fileName, "historySearch");
+}
+// 获取历史搜索内容
+export function setHistorySearch(fileName, key) {
+  let result = getHistorySeach(fileName)
+    ? [].concat(getHistorySeach(fileName))
+    : [];
+  if (key!=='') {
+    result.push(key);
+    return setBookObject(fileName, "historySearch", result);
+  }
+}
+
 // 设置字体
 export function setFontFamily(fileName, font) {
   return setBookObject(fileName, "fontFamily", font);
@@ -71,27 +86,28 @@ export function getLocale() {
 export function setLocale(locale) {
   return setLocalStorage("locale", locale);
 }
-
+// 获取章节定位信息
 export function getLocation(fileName) {
   return getBookObject(fileName, "location");
 }
-
+// 设置章节定位信息
 export function setLocation(fileName, location) {
   setBookObject(fileName, "location", location);
 }
 
+// 获取书签数组
 export function getBookmark(fileName) {
   return getBookObject(fileName, "bookmark");
 }
-
+// 设置书签数组
 export function setBookmark(fileName, bookmark) {
   setBookObject(fileName, "bookmark", bookmark);
 }
-
+// 获取阅读时间
 export function getReadTime(fileName) {
   return getBookObject(fileName, "time");
 }
-
+// 设置阅读时间
 export function setReadTime(fileName, theme) {
   setBookObject(fileName, "time", theme);
 }
@@ -119,11 +135,11 @@ export function getMetadata(fileName) {
 export function setMetadata(fileName, metadata) {
   setBookObject(fileName, "metadata", metadata);
 }
-
+// 获取书籍封面
 export function getCover(fileName) {
   return getBookObject(fileName, "cover");
 }
-
+// 设置书籍封面信息
 export function setCover(fileName, cover) {
   setBookObject(fileName, "cover", cover);
 }
