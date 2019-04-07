@@ -1,3 +1,4 @@
+// 返回的是 rem
 export function px2rem(px){
     let ratio = 375 / 10;
     return px / ratio 

@@ -29,8 +29,12 @@
         <img :src="cover" class="slide-contents-book-img">
       </div>
       <div class="slide-contents-book-info-wrapper">
-        <div class="slide-contents-book-title">{{metadata.title}}</div>
-        <div class="slide-contents-book-author">{{metadata.creator}}</div>
+        <div class="slide-contents-book-title">
+          <span class="slide-contents-book-title-text">{{metadata.title}}</span>
+        </div>
+        <div class="slide-contents-book-author">
+          <span class="slide-contents-book-author-text">{{metadata.creator}}</span>
+        </div>
       </div>
       <div class="slide-contents-book-progress-wrapper">
         <div class="slide-contents-book-progress">
@@ -49,7 +53,9 @@
           :class="{selected: section === index}"
           @click="changeSection(item.href)"
         >{{item.label}}</div>
-        <div class="slide-contents-item-page"></div>
+        <div class="slide-contents-item-page">
+          {{item.page}}
+        </div>
       </div>
     </scroll>
     <!-- 查询的结果 滚动条显示-->
@@ -157,7 +163,7 @@ export default {
     },
     // 根据搜索内容进行跳转
     changeItem(item) {
-      console.log(item)
+      console.log(item);
       this.display(item.cfi);
       this.hideMenu();
       this.currentBook.rendition.annotations.highlight(item.cfi);
@@ -229,15 +235,21 @@ export default {
       .slide-contents-book-title {
         font-size: px2rem(14);
         line-height: px2rem(16);
-        width: px2rem(148.75);
-        @include ellipsis2(3);
+        // width: px2rem(148.75);
+        @include left;
+        .slide-contents-book-title-text {
+          @include ellipsis2(3);
+        }
       }
       .slide-contents-book-author {
         font-size: px2rem(12);
-        width: px2rem(153.75);
+        // width: px2rem(153.75);
         line-height: px2rem(14);
         margin-top: px2rem(10);
-        @include ellipsis2(2);
+        @include left;
+        .slide-contents-book-author-text {
+          @include ellipsis2(1);
+        }
       }
     }
     .slide-contents-book-progress-wrapper {
@@ -270,10 +282,16 @@ export default {
       padding: px2rem(15) 0;
       box-sizing: border-box;
       font-size: px2rem(16);
+      display: flex;
       .slide-contents-item-label {
+        flex: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+      .slide-contents-item-page{
+          flex: 0 0 px2rem(40);
+          @include right;
       }
     }
   }

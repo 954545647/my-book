@@ -36,7 +36,7 @@ export default {
   },
   mounted() {
     //   一刷新就去 localStorage 中获取值并且保存到 vuex 中去
-    this.setBookMark(getBookmark(this.fileName));
+    this.setBookMark(getBookmark(this.fileName)?getBookmark(this.fileName):[]);
   }
 };
 </script>

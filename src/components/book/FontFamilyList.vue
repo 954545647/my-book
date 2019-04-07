@@ -1,4 +1,5 @@
 <template>
+<!-- 这是设置字体样式组件 -->
   <transition name="slide-font">
     <div class="font-family-list" v-show="fontFamilyVisible && menuVisible">
       <div class="title-wrapper">

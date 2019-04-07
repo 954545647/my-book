@@ -4,6 +4,7 @@
     <reader></reader>
     <book-menu></book-menu>
     <book-mark></book-mark>
+    <book-footer></book-footer>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import reader from "./../../components/book/reader";
 import BookTitle from "./../../components/book/title.vue";
 import BookMenu from "./../../components/book/menu.vue";
 import BookMark from "@/components/book/bookmark.vue";
+import BookFooter from '@/components/book/bookFooter.vue';
 import { getReadTime, setReadTime } from "@/utils/localStorage.js";
 import { setInterval, clearInterval } from "timers";
 import { bookMixin } from "@/utils/mixin.js";
@@ -21,7 +23,8 @@ export default {
     reader,
     BookTitle,
     BookMenu,
-    BookMark
+    BookMark,
+    BookFooter
   },
   watch: {
     // 在蒙版上面做完移动事件之后,将移动的距离保存到vuex中

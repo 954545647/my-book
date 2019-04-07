@@ -1,7 +1,15 @@
 <template>
   <div class="reader">
     <div id="read"></div>
-    <div class="mask" @click="changePage" @touchmove="move" @touchend="moveEnd"></div>
+    <div
+      class="mask"
+      @click="changePage"
+      @touchmove="move"
+      @touchend="moveEnd"
+      @mousedown="mouseDown"
+      @mousemove="mouseMove"
+      @mouseup="mouseUp"
+    ></div>
   </div>
 </template>
 
@@ -23,7 +31,62 @@ import {
 import { flatten } from "@/utils/book.js";
 export default {
   mixins: [bookMixin],
+  data() {
+    return {
+      mouseState: 0
+    };
+  },
   methods: {
+    // pc端鼠标开始点击
+    // 1: 鼠标进入 触发mouseDown事件
+    // 2: 鼠标进入后的移动(只处理鼠标点击后的移动事件)
+    // 3: 鼠标从移动状态松手
+    // 4: 鼠标还原
+    mouseDown(e) {
+      this.mouseState = 1;
+      this.mouseStartTime = e.timeStamp;
+      e.stopPropagation();
+      e.preventDefault();
+    },
+    mouseMove(e) {
+      if (this.mouseState === 1) {
+        this.mouseState = 2;
+      } else if (this.mouseState === 2) {
+        let offsetY = 0;
+        // 如果是第二次点击的话
+        if (this.preOffsetY) {
+          offsetY = e.clientY - this.preOffsetY;
+          this.setOffsetY(offsetY); // 保存到vuex中去
+        } else {
+          this.preOffsetY = e.clientY;
+        }
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    },
+    mouseUp(e) {
+      // 处理从状态2过来的事件
+      if (this.mouseState === 2) {
+        this.setOffsetY(0);
+        this.preOffsetY = 0;
+        this.mouseState = 3;
+      } else {
+        // 如果是仅仅点击没有移动的话 鼠标状态任然为 1
+        // 将鼠标状态修改为结束状态4
+        // 如果不修改其他的值的话(4),那么当我们鼠标点击后不移动我们鼠标此时的状态仍然为1
+        // 就会有个问题就是我们以为自己已经松开了,其实状态还是1,那么当我们拖动的时候就会触发状态2的事件,导致面板跟着我们动
+        this.mouseState = 4;
+      }
+      // 这个是处理如果用户不小心点击然后拖动了一下,系统判断状态为 3
+      // 这样就会给用户感觉是卡顿,因为用户实质是点击呼出菜单,但是不小心拖动了一下,系统判断状态3为拖拉面板,小距离脱离没有效果
+      // 我们强制将状态修改为4 这样就会呼出菜单,让用户有感觉
+      let time = e.timeStamp - this.mouseStartTime;
+      if (time < 100) {
+        this.mouseState = 4;
+      }
+      e.stopPropagation();
+      e.preventDefault();
+    },
     // 鼠标移动事件
     move(event) {
       // 初始值为0
@@ -46,7 +109,15 @@ export default {
       this.setOffsetY(0);
     },
     // 点击翻页
+    // 鼠标的点击事件最后会触发这个事件
     changePage(e) {
+      // 因为最后会触发蒙版的这个事件,所有需要在最后进行鼠标状态处理
+      // 当我们点击鼠标拖动完后,此时的状态为3,我们是想进行拖动面板,所以不需要呼出面板
+      // 如果我们仅仅是点击一下没有移动,就可以判断为我们是想要呼出面板
+      // 所以对状态 2 和 3 进行过滤
+      if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) {
+        return;
+      }
       let offsetX = e.offsetX; // 鼠标点击距离屏幕左右两侧的距离
       let Width = window.innerWidth; //屏幕的大小
       if (offsetX && offsetX < Width * 0.3) {
@@ -158,7 +229,10 @@ export default {
       //   将Book对象渲染到页面
       this.rendition = this.book.renderTo("read", {
         width: innerWidth,
-        height: innerHeight
+        height: innerHeight,
+        methods: "default"
+        // 还有滚动模式 但是微信不支持
+        // flow : 'scroll'
       });
 
       //   展示到页面上
@@ -284,7 +358,36 @@ export default {
             750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)
           )
           .then(locations => {
-            // locations获取分页信息
+            // locations分页信息 this.navigation目录信息
+            // 给每个目录初始化一个数组,里面用来存放相应的章节信息
+            this.navigation.forEach(nav => {
+              nav.pageList = [];
+            });
+            locations.forEach(item => {
+              // 遍历得到的分页信息去和我们的目录信息进行对比,看是属于哪一个目录
+              let loc = item.match(/\[(.*)\]!/)[1];
+              this.navigation.forEach(nav => {
+                if (nav.href) {
+                  let href = nav.href.match(/^(.*)\.html$/)[1];
+                  // 如果某一分页属于某一目录
+                  if (href === loc) {
+                    nav.pageList.push(item);
+                  }
+                }
+              });
+              // 给目录信息添加分页信息,即每一章从第几页
+              let currentPage = 1;
+              // 在上面已经给每一章节添加了一个pageList代表章节下有多少页
+              this.navigation.forEach((nav, index) => {
+                if (index === 0) {
+                  nav.page = 1;
+                } else {
+                  nav.page = currentPage;
+                }
+                // 当前页为 pageList的长度 + 1
+                currentPage += nav.pageList.length + 1;
+              });
+            });
             this.setBookAvailable(true); // 书籍加载完成
             this.refreshProgress();
           });

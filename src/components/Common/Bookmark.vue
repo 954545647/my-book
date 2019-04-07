@@ -1,5 +1,5 @@
 <template>
-  <div class="bookmark" :style="style" ref="bookmark"></div>
+  <div class="bookmark" :style="style" ref="bookmark" v-show="!this.$store.state.book.menuVisible"></div>
 </template>
 
 <script>

@@ -6,7 +6,7 @@
       </div>
       <div class="ebook-bookmark-text">{{text}}</div>
     </div>
-    <div class="ebook-bookmark-icon-wrapper" :style="isFix? fixStyle : {}">
+    <div class="ebook-bookmark-icon-wrapper" :style="isFix? fixStyle : {}" ref="iconWrapper">
       <bookmark :color="color"></bookmark>
     </div>
   </div>
@@ -182,7 +182,8 @@ export default {
       }
     }
   },
-  mounted() {}
+  mounted() {
+  }
 };
 </script>
 
@@ -215,10 +216,12 @@ export default {
     }
   }
   .ebook-bookmark-icon-wrapper {
+    z-index: 0;
     position: absolute;
     right: 0;
-    bottom: 0;
+    top: 0;
     margin-right: px2rem(15);
+    // height: px2rem(45);
   }
 }
 </style>

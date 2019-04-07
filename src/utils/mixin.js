@@ -18,7 +18,7 @@ export const bookMixin = {
       "section", // 章节数
       "isPaginating",
       "currentBook",
-      "navigation",
+      "navigation",//目录信息
       "cover", // 封面信息
       "metadata", // 作者和标题信息
       "paginate",
@@ -26,7 +26,7 @@ export const bookMixin = {
       "offsetY", // $refs.book 向下偏移的量
       "isBookmark", // 是否是书签
       "speakingIconBottom",
-      "bookdata",
+      "bookdata"
     ]),
     themeList() {
       return themeList(this); //传入this是vue实例,因为需要国际化
@@ -82,13 +82,15 @@ export const bookMixin = {
       let bookmarks = getBookmark(this.fileName);
       // 如果现有书签数组中存在一个和当前cfi值一样的话,那么就返回true
       if (bookmarks) {
-        let data = bookmarks.some(item => {
-          return item.cfi == currentLocation.start.cfi;
-        });
-        if (data) {
-          this.setIsBookmark(true);
-        } else {
-          this.setIsBookmark(false);
+        if (currentLocation && currentLocation.start) {
+          let data = bookmarks.some(item => {
+            return item.cfi == currentLocation.start.cfi;
+          });
+          if (data) {
+            this.setIsBookmark(true);
+          } else {
+            this.setIsBookmark(false);
+          }
         }
       }
     },
