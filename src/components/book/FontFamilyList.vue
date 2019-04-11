@@ -63,9 +63,8 @@ export default {
   left: 0;
   bottom: 0;
   width: 100%;
-  height: px2rem(250);
   background: white;
-  z-index: 101;
+  z-index: 300;
   display: flex;
   flex-direction: column;
   .title-wrapper {
@@ -90,7 +89,8 @@ export default {
     flex-direction: column;
     font-size: px2rem(14);
     .item {
-      flex: 1;
+      flex: 0 0 px2rem(40);
+      height: px2rem(40);
       display: flex;
       .title {
         flex: 2;

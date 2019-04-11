@@ -185,6 +185,7 @@ export default {
   bottom: px2rem(50);
   background: #fff;
   height: px2rem(90);
+  z-index: 200;
   .setting-progress {
     display: flex;
     flex-direction: column;

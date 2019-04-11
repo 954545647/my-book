@@ -62,10 +62,7 @@ export default {
 <style lang="scss">
 @import "./../../assets/styles/global.scss";
 .wrapper {
-  position: relative;
-  left: 0;
-  bottom: 0;
-  z-index: 200;
+    overflow: hidden;
   .menu-wrapper {
     position: absolute;
     left: 0;
@@ -75,7 +72,8 @@ export default {
     display: flex;
     background: #fff;
     box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, 0.1);
-    z-index: 101;
+    overflow: hidden;
+    z-index: 300;
     .menu-item {
       font-size: px2rem(22);
       @include center;

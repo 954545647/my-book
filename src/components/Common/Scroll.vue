@@ -1,5 +1,10 @@
 <template>
-  <div class="scroll-wrapper" @scroll.passive="handleScroll" ref="scrollWrapper">
+  <div
+    class="scroll-wrapper"
+    :class="{'no-scroll': ifNoScroll}"
+    @scroll.passive="handleScroll"
+    ref="scrollWrapper"
+  >
     <slot></slot>
   </div>
 </template>
@@ -16,6 +21,19 @@ export default {
     bottom: {
       type: Number,
       default: 0
+    },
+    ifNoScroll: {
+      type: Boolean,
+      default: false
+    },
+    initPosition: {
+      type: Object,
+      default: () => {
+        return {
+          x: 0,
+          y: 0
+        };
+      }
     }
   },
   methods: {
@@ -24,6 +42,10 @@ export default {
         e.target.scrollTop || window.pageYOffset || document.body.scrollTop;
       this.$emit("onScroll", offsetY);
     },
+    scrollTo(x, y) {
+      this.$refs.scrollWrapper.scrollTo(x, y);
+    },
+    // 重新计算滚动条高度
     refresh() {
       if (this.$refs.scrollWrapper) {
         this.$refs.scrollWrapper.style.height =
@@ -34,6 +56,11 @@ export default {
   },
   mounted() {
     this.refresh();
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.scrollTo(realPx(this.initPosition.x), realPx(this.initPosition.y));
+      }, 1);
+    });
   }
 };
 </script>
@@ -47,13 +74,15 @@ export default {
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
+  @include scroll;
+
   // 针对移动端的卡顿问题
   -webkit-overflow-scrolling: touch;
   &::-webkit-scrollbar {
     display: none;
   }
-  &.no-scroll {
-    overflow: hidden;
-  }
+}
+.no-scroll {
+  overflow: hidden;
 }
 </style>

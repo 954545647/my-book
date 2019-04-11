@@ -18,7 +18,7 @@ export const bookMixin = {
       "section", // 章节数
       "isPaginating",
       "currentBook",
-      "navigation",//目录信息
+      "navigation", //目录信息
       "cover", // 封面信息
       "metadata", // 作者和标题信息
       "paginate",
@@ -127,5 +127,28 @@ export const bookMixin = {
         return Math.ceil(readTime / 60);
       }
     }
+  }
+};
+
+export const storeHomeMixin = {
+  // 首先是 getters.js 文件
+  // offsetY: state => state.book.offsetY
+  // 然后将这些属性混入到 computed中
+  computed: {
+    ...mapGetters([
+      "offsetY",
+      "hotSearchScroll",
+      "hotSearchVisiable",
+      "flipCardVisiable"
+    ])
+  },
+  methods: {
+    // 将actions混入到methods中
+    ...mapActions([
+      "setOffsetY",
+      "setHotSearchVisiable",
+      "setHotSearchScroll",
+      "setFlipCardVisiable"
+    ])
   }
 };

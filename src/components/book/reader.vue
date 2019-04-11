@@ -368,9 +368,14 @@ export default {
               let loc = item.match(/\[(.*)\]!/)[1];
               this.navigation.forEach(nav => {
                 if (nav.href) {
-                  let href = nav.href.match(/^(.*)\.html$/)[1];
+                  let href = nav.href.match(/(.*)\.xhtml/)
+                    ? nav.href.match(/(.*)\.xhtml/)[1]
+                    : "";
+                  let href2 = nav.href.match(/(.*)\.html/)
+                    ? nav.href.match(/(.*)\.html/)[1]
+                    : "";
                   // 如果某一分页属于某一目录
-                  if (href === loc) {
+                  if (href === loc || href2 === loc) {
                     nav.pageList.push(item);
                   }
                 }
@@ -421,7 +426,7 @@ export default {
   .mask {
     width: 100%;
     height: 100%;
-    z-index: 150;
+    z-index: 0;
     position: absolute;
     left: 0;
     top: 0;

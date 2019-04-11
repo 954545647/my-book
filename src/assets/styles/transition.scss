@@ -51,17 +51,20 @@
 }
 .slider-left-right-enter-active,
 .slider-left-right-leave-active {
-  transition: all .2s linear;
+  transition: all 0.2s linear;
 }
 
-.fade-enter, .fade-leave-to{
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
-.fade-leave, .fade-enter-to{
+.fade-leave,
+.fade-enter-to {
   opacity: 1;
 }
-.fade-enter-active, .fade-leave-active{
-  transition: all .2s linear;
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s linear;
 }
 
 .slider-left-right-enter,
@@ -74,5 +77,36 @@
 }
 .slider-left-right-enter-active,
 .slider-left-right-leave-active {
+  transition: all 0.2s linear;
+}
+
+// 消失时状态
+.hide-title-enter,
+.hide-title-leave-to {
+  transform: translate3d(0 px2rem(10) 0);
+  opacity: 0;
+}
+// 出现状态
+.hide-title-leave,
+.hide-title-enter-to {
+  transform: translate3d(0 0 0);
+  opacity: 1;
+}
+.hide-title-enter-active,
+.hide-title-leave-active {
+  transition: all .2s linear;
+}
+
+// 离开的状态
+.hot-search-move-enter, .hot-search-move-leave-to{
+  opacity: 0;
+  transform: translate3d(0 -100% 0);
+}
+// 出现
+.hot-search-move-leave, .hot-search-move-enter-to{
+  opacity: 1;
+  transform: translate3d(0 0 0);
+}
+.hot-search-move-enter-active, .hot-search-move-leave-active{
   transition: all .2s linear;
 }

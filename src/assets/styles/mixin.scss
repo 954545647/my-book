@@ -40,3 +40,22 @@ $ratio: 37.5; // iPhone4的
   text-overflow: ellipsis;
   word-break: break-all; // 强制换行
 }
+
+.icon {
+  color: #666;
+  font-size: px2rem(16);
+}
+.title{
+  color: #666;
+  font-size: px2rem(16);
+  font-weight: bold;
+}
+
+@mixin scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

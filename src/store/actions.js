@@ -61,6 +61,15 @@ const actions = {
   },
   setBookMark({ commit }, bookdata) {
     commit("setBookMark", bookdata);
+  },
+  setHotSearchScroll({ commit }, hotSearchScroll) {
+    commit("setHotSearchScroll", hotSearchScroll);
+  },
+  setHotSearchVisiable({ commit }, hotSearchVisiable) {
+    commit("setHotSearchVisiable", hotSearchVisiable);
+  },
+  setFlipCardVisiable({commit},flipCardVisiable){
+    commit('setFlipCardVisiable',flipCardVisiable);
   }
 };
 

@@ -3,16 +3,16 @@ const book = {
     fileName: "", // 文件名称
     menuVisible: false, // 菜单栏显示与否
     // 菜单主题线束  -1:不显示; 0:字号; 1:主题; 2:进度条; 3:目录
-    settingVisible: -1, 
-    defaultFontSize: 16,  // 默认字体大小
+    settingVisible: -1,
+    defaultFontSize: 16, // 默认字体大小
     defaultFontFamily: "Default", // 默认字体类型
     fontFamilyVisible: false, // 字体菜单显示与否
-    defaultTheme: "Default",  // 默认主题
+    defaultTheme: "Default", // 默认主题
     bookAvailable: false, // 书籍是否加载完成
-    progress: 0,    // 当前进度 
-    section: 0,     // 当前章节
+    progress: 0, // 当前进度
+    section: 0, // 当前章节
     isPaginating: true,
-    currentBook: null,  // 当前book实例对象
+    currentBook: null, // 当前book实例对象
     navigation: null,
     cover: null,
     metadata: null,
@@ -20,7 +20,7 @@ const book = {
     pagelist: null,
     offsetY: 0,
     isBookmark: null,
-    bookdata: [],  // 书签数组
+    bookdata: [], // 书签数组
     // speakingIconBottom: realPx(58)
   },
   mutations: {
@@ -29,8 +29,8 @@ const book = {
       state.fileName = newFile;
     },
     // 设置书签数组
-    setBookMark(state,bookdata){
-      state.bookdata = bookdata
+    setBookMark(state, bookdata) {
+      state.bookdata = bookdata;
     },
     // 设置菜单栏的显示或者隐藏
     setmenuVisible(state, menuVisible) {
