@@ -14,12 +14,12 @@
       <div
         class="title-icon-back-wrapper"
         :class="{hideTitle: !titleVisiable}"
-        @click="showTitleBar()"
+        @click="hideHotSearch()"
       >
         <i class="icon-back icon"></i>
       </div>
       <div class="search-bar-input-wrapper" :class="{hideTitle: !titleVisiable}">
-        <div class="search-bar-dom" :class="{hideTitle: !titleVisiable}" @click="hideHotSearch()"></div>
+        <div class="search-bar-dom" :class="{hideTitle: !titleVisiable}"></div>
         <div class="search-bar-input">
           <i class="icon-search icon"></i>
           <input
@@ -58,7 +58,7 @@
 import { storeHomeMixin } from "@/utils/mixin.js";
 import HotSearch from "./HotSearch.vue";
 import Scroll from "../Common/Scroll";
-import {home} from '@/api/store.js';  // axios方法
+import { home } from "@/api/store.js"; // axios方法
 export default {
   mixins: [storeHomeMixin],
   data() {
@@ -213,19 +213,23 @@ export default {
       });
     },
     hideHotSearch() {
-      this.showTitleBar();
       this.setHotSearchVisiable(false);
       if (this.offsetY > 0) {
         this.hideTitleBar();
         this.showShadow();
       } else {
-        this.showTitleBar();
         this.hideShadow();
+      }
+      if (this.titleVisiable) {
+        this.$router.push("/store/shelf");
+      } else {
+        this.hideTitleBar();
+        this.titleVisiable = true;
       }
     },
     // 展示翻转卡片
-    showCard(){
-      this.setFlipCardVisiable(true)
+    showCard() {
+      this.setFlipCardVisiable(true);
     },
     // 滚动
     onScroll(val) {
@@ -280,8 +284,11 @@ export default {
     position: absolute;
     left: px2rem(15);
     top: 0;
+    z-index: 150;
+    padding: px2rem(10) px2rem(10);
     @include center;
     height: px2rem(42);
+    box-sizing: border-box;
     transition: height 0.2s linear;
     &.hideTitle {
       height: px2rem(56);

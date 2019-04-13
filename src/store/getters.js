@@ -22,7 +22,13 @@ const getters = {
   bookdata: state => state.book.bookdata,
   hotSearchScroll: state => state.home.hotSearchScroll,
   hotSearchVisiable: state => state.home.hotSearchVisiable,
-  flipCardVisiable: state => state.home.flipCardVisiable
+  flipCardVisiable: state => state.home.flipCardVisiable,
+  isEditMode: state => state.home.isEditMode,
+  shelfList: state => state.home.shelfList,
+  shelfSelected: state => state.home.shelfSelected,
+  shelfTitleVisible: state => state.home.shelfTitleVisible,
+  shelfCategory: state => state.home.shelfCategory,
+  currentType: state => state.home.currentType
 };
 
 export default getters;

@@ -1,59 +1,89 @@
-export function showBookDetail(vue, book) {
+// 跳转到主页
+export function gotoStoreHome(vue){
+  vue.$router.push({
+    path:'/store/home'
+  })
+}
+// 跳转到图书详情页
+export function gotoBookDetail(vue,book){
   vue.$router.push({
     path: '/store/detail',
-    query: {
+    query:{
       fileName: book.fileName,
       category: book.categoryText
     }
   })
 }
 
-export const categoryList = {
-  'ComputerScience': 1,
-  'SocialSciences': 2,
-  'Economics': 3,
-  'Education': 4,
-  'Engineering': 5,
-  'Environment': 6,
-  'Geography': 7,
-  'History': 8,
-  'Laws': 9,
-  'LifeSciences': 10,
-  'Literature': 11,
-  'Biomedicine': 12,
-  'BusinessandManagement': 13,
-  'EarthSciences': 14,
-  'MaterialsScience': 15,
-  'Mathematics': 16,
-  'MedicineAndPublicHealth': 17,
-  'Philosophy': 18,
-  'Physics': 19,
-  'PoliticalScienceAndInternationalRelations': 20,
-  'Psychology': 21,
-  'Statistics': 22
+// 添加一本书
+export function AddToShelf(list) {
+  list.push({
+    id: -1,
+    type: 3
+  });
+  return list;
 }
+// 删除书
+export function removeFromShelf(list) {
+  return list.filter(item => item.type != 3);
+}
+
+export function showBookDetail(vue, book) {
+  vue.$router.push({
+    path: "/store/detail",
+    query: {
+      fileName: book.fileName,
+      category: book.categoryText
+    }
+  });
+}
+
+export const categoryList = {
+  ComputerScience: 1,
+  SocialSciences: 2,
+  Economics: 3,
+  Education: 4,
+  Engineering: 5,
+  Environment: 6,
+  Geography: 7,
+  History: 8,
+  Laws: 9,
+  LifeSciences: 10,
+  Literature: 11,
+  Biomedicine: 12,
+  BusinessandManagement: 13,
+  EarthSciences: 14,
+  MaterialsScience: 15,
+  Mathematics: 16,
+  MedicineAndPublicHealth: 17,
+  Philosophy: 18,
+  Physics: 19,
+  PoliticalScienceAndInternationalRelations: 20,
+  Psychology: 21,
+  Statistics: 22
+};
 
 export const flapCardList = [
   // 每个圆的位置
   {
     r: 255,
     g: 102,
-    old: 102,// 这个值是用来改变的 变深变浅
+    old: 102, // 这个值是用来改变的 变深变浅
     b: 159,
-    imgLeft: 'url(' + require('@/assets/images/gift-left.png') + ')',
-    imgRight: 'url(' + require('@/assets/images/gift-right.png') + ')',
-    backgroundSize: '50% 50%',
-    zIndex: 100,  
+    imgLeft: "url(" + require("@/assets/images/gift-left.png") + ")",
+    imgRight: "url(" + require("@/assets/images/gift-right.png") + ")",
+    backgroundSize: "50% 50%",
+    zIndex: 100,
     rotateDegree: 0 // 转动的角度
   },
   {
     r: 74,
     g: 171,
-    old:171,
+    old: 171,
     b: 255,
-    imgLeft: 'url(' + require('@/assets/images/compass-left.png') + ')',
-    imgRight: 'url(' + require('@/assets/images/compass-right.png') + ')',
-    backgroundSize: '50% 50%',
+    imgLeft: "url(" + require("@/assets/images/compass-left.png") + ")",
+    imgRight: "url(" + require("@/assets/images/compass-right.png") + ")",
+    backgroundSize: "50% 50%",
     zIndex: 99,
     rotateDegree: 0
   },
@@ -62,9 +92,9 @@ export const flapCardList = [
     g: 198,
     old: 198,
     b: 102,
-    imgLeft: 'url(' + require('@/assets/images/star-left.png') + ')',
-    imgRight: 'url(' + require('@/assets/images/star-right.png') + ')',
-    backgroundSize: '50% 50%',
+    imgLeft: "url(" + require("@/assets/images/star-left.png") + ")",
+    imgRight: "url(" + require("@/assets/images/star-right.png") + ")",
+    backgroundSize: "50% 50%",
     zIndex: 98,
     rotateDegree: 0
   },
@@ -73,9 +103,9 @@ export const flapCardList = [
     g: 102,
     old: 102,
     b: 159,
-    imgLeft: 'url(' + require('@/assets/images/heart-left.png') + ')',
-    imgRight: 'url(' + require('@/assets/images/heart-right.png') + ')',
-    backgroundSize: '50% 50%',
+    imgLeft: "url(" + require("@/assets/images/heart-left.png") + ")",
+    imgRight: "url(" + require("@/assets/images/heart-right.png") + ")",
+    backgroundSize: "50% 50%",
     zIndex: 97,
     rotateDegree: 0
   },
@@ -84,108 +114,108 @@ export const flapCardList = [
     g: 201,
     old: 201,
     b: 22,
-    imgLeft: 'url(' + require('@/assets/images/crown-left.png') + ')',
-    imgRight: 'url(' + require('@/assets/images/crown-right.png') + ')',
-    backgroundSize: '50% 50%',
+    imgLeft: "url(" + require("@/assets/images/crown-left.png") + ")",
+    imgRight: "url(" + require("@/assets/images/crown-right.png") + ")",
+    backgroundSize: "50% 50%",
     zIndex: 96,
     rotateDegree: 0
   }
-]
+];
 
 export function getCategoryName(id) {
   switch (id) {
     case 1:
-      return 'ComputerScience'
+      return "ComputerScience";
     case 2:
-      return 'SocialSciences'
+      return "SocialSciences";
     case 3:
-      return 'Economics'
+      return "Economics";
     case 4:
-      return 'Education'
+      return "Education";
     case 5:
-      return 'Engineering'
+      return "Engineering";
     case 6:
-      return 'Environment'
+      return "Environment";
     case 7:
-      return 'Geography'
+      return "Geography";
     case 8:
-      return 'History'
+      return "History";
     case 9:
-      return 'Laws'
+      return "Laws";
     case 10:
-      return 'LifeSciences'
+      return "LifeSciences";
     case 11:
-      return 'Literature'
+      return "Literature";
     case 12:
-      return 'Biomedicine'
+      return "Biomedicine";
     case 13:
-      return 'BusinessandManagement'
+      return "BusinessandManagement";
     case 14:
-      return 'EarthSciences'
+      return "EarthSciences";
     case 15:
-      return 'MaterialsScience'
+      return "MaterialsScience";
     case 16:
-      return 'Mathematics'
+      return "Mathematics";
     case 17:
-      return 'MedicineAndPublicHealth'
+      return "MedicineAndPublicHealth";
     case 18:
-      return 'Philosophy'
+      return "Philosophy";
     case 19:
-      return 'Physics'
+      return "Physics";
     case 20:
-      return 'PoliticalScienceAndInternationalRelations'
+      return "PoliticalScienceAndInternationalRelations";
     case 21:
-      return 'Psychology'
+      return "Psychology";
     case 22:
-      return 'Statistics'
+      return "Statistics";
   }
 }
 
 export function categoryText(category, vue) {
   switch (category) {
     case 1:
-      return vue.$t('category.computerScience')
+      return vue.$t("category.computerScience");
     case 2:
-      return vue.$t('category.socialSciences')
+      return vue.$t("category.socialSciences");
     case 3:
-      return vue.$t('category.economics')
+      return vue.$t("category.economics");
     case 4:
-      return vue.$t('category.education')
+      return vue.$t("category.education");
     case 5:
-      return vue.$t('category.engineering')
+      return vue.$t("category.engineering");
     case 6:
-      return vue.$t('category.environment')
+      return vue.$t("category.environment");
     case 7:
-      return vue.$t('category.geography')
+      return vue.$t("category.geography");
     case 8:
-      return vue.$t('category.history')
+      return vue.$t("category.history");
     case 9:
-      return vue.$t('category.laws')
+      return vue.$t("category.laws");
     case 10:
-      return vue.$t('category.lifeSciences')
+      return vue.$t("category.lifeSciences");
     case 11:
-      return vue.$t('category.literature')
+      return vue.$t("category.literature");
     case 12:
-      return vue.$t('category.biomedicine')
+      return vue.$t("category.biomedicine");
     case 13:
-      return vue.$t('category.businessandManagement')
+      return vue.$t("category.businessandManagement");
     case 14:
-      return vue.$t('category.earthSciences')
+      return vue.$t("category.earthSciences");
     case 15:
-      return vue.$t('category.materialsScience')
+      return vue.$t("category.materialsScience");
     case 16:
-      return vue.$t('category.mathematics')
+      return vue.$t("category.mathematics");
     case 17:
-      return vue.$t('category.medicineAndPublicHealth')
+      return vue.$t("category.medicineAndPublicHealth");
     case 18:
-      return vue.$t('category.philosophy')
+      return vue.$t("category.philosophy");
     case 19:
-      return vue.$t('category.physics')
+      return vue.$t("category.physics");
     case 20:
-      return vue.$t('category.politicalScienceAndInternationalRelations')
+      return vue.$t("category.politicalScienceAndInternationalRelations");
     case 21:
-      return vue.$t('category.psychology')
+      return vue.$t("category.psychology");
     case 22:
-      return vue.$t('category.statistics')
+      return vue.$t("category.statistics");
   }
 }

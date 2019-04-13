@@ -392,7 +392,7 @@ export default {
     border-radius: px2rem(15);
     background: #fff;
     &.hasBookAnimation {
-      animation: bookAnimation 30s linear;
+      animation: bookAnimation .3s linear;
     }
     @keyframes bookAnimation {
       0% {

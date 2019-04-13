@@ -6,11 +6,11 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: "/",
-      redirect: "/store"
+      path: '/',
+      redirect: '/store/home'
     },
     {
-      path: "/book",
+      path: "/ebook",
       component: () => import("./views/book/index.vue"),
       children:[
         {
@@ -24,8 +24,20 @@ export default new Router({
       component:()=> import('./views/bookstore/index.vue'),
       children:[
         {
-          path:':bookname',
+          path:'home',
           component:()=> import('./components/bookstore/storehome.vue')
+        },
+        {
+          path: 'list',
+          component:()=> import('./components/bookstore/StoreList.vue')
+        },
+        {
+          path: 'detail',
+          component:()=> import('./components/bookstore/StoreDetail.vue')
+        },
+        {
+          path: 'shelf',
+          component:()=> import('./components/bookstore/shelf.vue')
         }
       ]
     }

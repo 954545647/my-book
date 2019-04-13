@@ -2,6 +2,81 @@ import { mapGetters, mapActions } from "vuex";
 import { themeList, addCss, removeCss } from "@/utils/book.js"; //主题列表
 import { setLocation, getReadTime } from "@/utils/localStorage.js";
 import { getBookmark } from "./localStorage";
+import { gotoBookDetail } from "./store";
+
+export const storeShelfMixin = {
+  computed: {
+    ...mapGetters([
+      "isEditMode",
+      "shelfList",
+      "shelfSelected",
+      "shelfTitleVisible",
+      "offsetY",
+      "shelfCategory",
+      "currentType"
+    ])
+  },
+  methods: {
+    ...mapActions([
+      "setIsEditMode",
+      "setShelfList",
+      "setShelfSelected",
+      "setShelfTitleVisible",
+      "setOffsetY",
+      "setShelfCategory",
+      "setCurrentType"
+    ]),
+    showBookDetail(book) {
+      gotoBookDetail(this, book);
+    },
+    getCategoryList(title) {
+      this.getShelfList().then(() => {
+        const categoryList = this.shelfList.filter(
+          book => book.type === 2 && book.title === title
+        )[0];
+        this.setShelfCategory(categoryList);
+      });
+    },
+    getShelfList() {
+      let shelfList = getBookShelf();
+      if (!shelfList) {
+        shelf().then(response => {
+          if (
+            response.status === 200 &&
+            response.data &&
+            response.data.bookList
+          ) {
+            shelfList = appendAddToShelf(response.data.bookList);
+            saveBookShelf(shelfList);
+            return this.setShelfList(shelfList);
+          }
+        });
+      } else {
+        return this.setShelfList(shelfList);
+      }
+    },
+    moveOutOfGroup(f) {
+      this.setShelfList(
+        this.shelfList.map(book => {
+          if (book.type === 2 && book.itemList) {
+            book.itemList = book.itemList.filter(subBook => !subBook.selected);
+          }
+          return book;
+        })
+      ).then(() => {
+        const list = computeId(
+          appendAddToShelf(
+            [].concat(removeAddFromShelf(this.shelfList), ...this.shelfSelected)
+          )
+        );
+        this.setShelfList(list).then(() => {
+          this.simpleToast(this.$t("shelf.moveBookOutSuccess"));
+          if (f) f();
+        });
+      });
+    }
+  }
+};
 
 export const bookMixin = {
   computed: {
@@ -149,6 +224,29 @@ export const storeHomeMixin = {
       "setHotSearchVisiable",
       "setHotSearchScroll",
       "setFlipCardVisiable"
-    ])
+    ]),
+    showBookDetail(book) {
+      this.$router.push({
+        path: "/store/detail",
+        query: {
+          fileName: book.fileName,
+          category: book.categoryText
+        }
+      });
+    }
+  }
+};
+
+
+
+// 只有不想同的元素才会被添加进数组中去
+Array.prototype.addWithoutSame = function() {
+  for (var i = 0; i < arguments.length; i++) {
+    let arr = arguments[i];
+    // 这里的this代表我们调用的对象
+    if (this.indexOf(arr) === -1) {
+      // 如果在之前的数组中不存在当前项,就把当前项push进调用对象中去
+      this.push(arr);
+    }
   }
 };

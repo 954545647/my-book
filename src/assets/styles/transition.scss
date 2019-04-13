@@ -110,3 +110,28 @@
 .hot-search-move-enter-active, .hot-search-move-leave-active{
   transition: all .2s linear;
 }
+
+.hot-search-move-enter, .hot-search-move-leave-to{
+  opacity: 0;
+  transform: translate3d(0,100%,0);
+}
+
+.hot-search-move-enter-to, .hot-search-move-leave{
+  opacity: 1;
+  transform: translate3d(0,0,0)
+}
+.hot-search-move-enter-active, .hot-search-move-leave-active{
+  transition: all .2s linear;
+}
+
+.popup-enter, .popup-leave-to{
+  opacity: 0;
+  transform: translate3d(0,100%,0);
+}
+.popup-leave, .popup-enter-to{
+  opacity: 1;
+  transform: translate3d(0,0,0);
+}
+.popup-enter-active, .popup-leave-active{
+  transition: all .2s linear;
+}

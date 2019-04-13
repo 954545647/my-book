@@ -6,31 +6,11 @@
     <!-- 在子组件中触发到父组件中去 this.$emit("onScroll", offsetY)-->
 
     <scroll :top="scrollTop" @onScroll="onScroll" ref="scroll">
-      <!-- <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div>
-      <div>111</div> -->
-   
+      <div class="banner-wrapper">
+        <img :src="bannerImg" alt>
+      </div>
+      <guess-you-like :guessData="guessData">
+      </guess-you-like>
     </scroll>
   </div>
 </template>
@@ -39,21 +19,26 @@
 <script>
 import SearchBar from "./searchBar";
 import Scroll from "../Common/Scroll";
-import FlipCard from './FlipCard.vue';
+import FlipCard from "./FlipCard.vue";
 import { storeHomeMixin } from "@/utils/mixin.js";
-import {home} from '@/api/store.js';  // axios方法
+import { home, coverImg } from "@/api/store.js"; // axios方法
+import "swiper/dist/css/swiper.css";
+import GuessYouLike from "./guessUlike.vue";
 export default {
   mixins: [storeHomeMixin],
   data() {
     return {
       scrollTop: 98,
       randomBook: {},
+      bannerImg: null, // 封面图片
+      guessData: []
     };
   },
   components: {
     SearchBar,
     Scroll,
-    FlipCard
+    FlipCard,
+    GuessYouLike
   },
   methods: {
     onScroll(val) {
@@ -64,26 +49,40 @@ export default {
         this.scrollTop = 98;
       }
       this.$refs.scroll.refresh();
-    }
+    },
+    callback() {}
   },
   mounted() {
-    home().then((res)=>{
-      if(res && res.status === 200){
+    home().then(res => {
+      if (res && res.status === 200) {
         let data = res.data.random;
         // 根据mock数据 随机生成一本书传递到我们的子组件中去
-        let num = Math.floor(Math.random() * data.length)
+        let num = Math.floor(Math.random() * data.length);
         this.randomBook = data[num];
-        // console.log(this.randomBook);
+        this.bannerImg = res.data.banner;
+        this.guessData = res.data.guessYouLike;
       }
-    })
-  },
+    });
+  }
 };
 </script>
 
 
 <style lang="scss">
+@import "@/assets/styles/global.scss";
+
 .store-home {
   width: 100%;
   height: 100%;
+  .banner-wrapper {
+    padding: px2rem(10) px2rem(10);
+    box-sizing: border-box;
+    img {
+      width: 100%;
+      height: px2rem(150);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+  }
 }
 </style>
