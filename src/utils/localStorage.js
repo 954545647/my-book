@@ -61,7 +61,6 @@ export function setHistorySearch(fileName, key) {
 }
 
 // 设置选中书籍信息
-
 export function saveBookShelf(shelf) {
   return setLocalStorage('shelf', shelf)
 }

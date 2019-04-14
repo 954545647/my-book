@@ -1,18 +1,64 @@
+import Axios from "axios";
+import { getLocalForage, setLocalForage } from "./localForage";
+
 // 跳转到主页
-export function gotoStoreHome(vue){
+export function gotoStoreHome(vue) {
   vue.$router.push({
-    path:'/store/home'
-  })
+    path: "/store/home"
+  });
 }
 // 跳转到图书详情页
-export function gotoBookDetail(vue,book){
+export function gotoBookDetail(vue, book) {
   vue.$router.push({
-    path: '/store/detail',
-    query:{
+    path: "/store/detail",
+    query: {
       fileName: book.fileName,
       category: book.categoryText
     }
+  });
+}
+
+// 下载电子书
+export function download(book, onsuccess, onerr, onprogress) {
+  // 如果没有传入第四个参数,默认为第三个参数
+  if (!onprogress) {
+    onprogress = onerr;
+    onerr = null;
+  }
+  return Axios.create({
+    // 基础路由,axios在发起请求时默认会使用这个前缀
+    baseURL: process.env.VUE_APP_EPUB_URL, // 本地速度太快了,所以改用线上接口
+    // baseURL: process.env.VUE_APP_EPUB2_URL, // 线上接口
+    method: "get",
+    responseType: "blob",
+    timeout: 180 * 1000,
+    // onDownloadProgress是一个axios提供的API,会不断执行
+    // 这是我们把我们在下载过程中需要进行的函数传递进来,就可以得到下载过程
+    // 这里把 toast 组件显示下载百分比封装成一个函数并且传递进来并且不断调用
+    onDownloadProgress: progressEvent => {
+      // progressEvent是api提供的参数,里面有进度相关数据
+      if (onprogress) {
+        onprogress(progressEvent);
+      }
+    }
   })
+    .get(`${book.categoryText}/${book.fileName}.epub`)
+    .then(res => {
+      // console.log(res);
+      // 下载的数据res中的data属性是一个 Blob对象
+      let blob = new Blob([res.data]); // 可以使用 epubjs 直接打开
+      // 把下载的数据中的 blob 对象通过localForage保存
+      setLocalForage(
+        // 键是书名,键值是blob对象,还有两个回调函数
+        book.fileName,
+        blob,
+        () => onsuccess(book),
+        err => onerr(err)
+      );
+    })
+    .catch(err => {
+      if (onerr) onerr(err);
+    });
 }
 
 // 添加一本书
@@ -28,6 +74,7 @@ export function removeFromShelf(list) {
   return list.filter(item => item.type != 3);
 }
 
+// 显示图书详情页
 export function showBookDetail(vue, book) {
   vue.$router.push({
     path: "/store/detail",

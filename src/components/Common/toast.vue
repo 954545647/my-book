@@ -1,8 +1,10 @@
 <template>
   <transition name="fade">
-    <div class="toast-bg" v-show="visiable">
-      <div class="toast-wrapper">
-        <div class="toast" v-html="text"></div>
+    <div class="toast-bg-wrapper" @click.prevent v-show="visiable">
+      <div class="toast-bg">
+        <div class="toast-wrapper">
+          <div class="toast" v-html="showText"></div>
+        </div>
       </div>
     </div>
   </transition>
@@ -10,7 +12,7 @@
 
 <script>
 export default {
-  name:'Toast',
+  name: "Toast",
   props: {
     text: {
       type: [String, Number],
@@ -23,7 +25,8 @@ export default {
   },
   data() {
     return {
-      visiable: false
+      visiable: false,
+      showText: ""
     };
   },
   methods: {
@@ -31,6 +34,7 @@ export default {
       this.visiable = false;
     },
     show() {
+      this.changeText(this.text);
       clearTimeout(this.task);
       this.task = null;
       this.visiable = true;
@@ -39,22 +43,33 @@ export default {
       }, this.timeout);
     },
     continueShow() {
+      this.changeText(this.text);
       clearTimeout(this.task);
       this.task = null;
       this.visiable = true;
+    },
+    changeText(text) {
+      this.showText = text;
     }
   }
 };
 </script>
 
 <style lang="scss"  scoped>
-  @import "@/assets/styles/global.scss";
-
+@import "@/assets/styles/global.scss";
+.toast-bg-wrapper {
+  position: absolute;
+  z-index: 2000;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: transparent;
   .toast-bg {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     z-index: 2500;
     width: 100%;
     @include center;
@@ -73,5 +88,6 @@ export default {
       }
     }
   }
+}
 </style>
 

@@ -22,7 +22,10 @@
 
 <script>
 import { storeShelfMixin } from "../../utils/mixin";
-import {saveBookShelf} from '@/utils/localStorage.js';
+import { saveBookShelf, removeLocalStorage } from "@/utils/localStorage.js";
+import { download } from "@/utils/store.js";
+import { removeLocalForage } from "@/utils/localForage.js";
+import { Promise } from "q";
 export default {
   mixins: [storeShelfMixin],
   computed: {
@@ -73,14 +76,14 @@ export default {
   },
   data() {
     return {
-      popupMenu: null,
+      popupMenu: null
     };
   },
   methods: {
-    Oncomplete(){
+    Oncomplete() {
       this.hidePopup();
       this.setIsEditMode(false);
-      saveBookShelf(this.setShelfList); //将数据保存到 localStorage中
+      saveBookShelf(this.shelfList); //将数据保存到 localStorage中
     },
     // 隐藏私密弹出窗口
     hidePopup() {
@@ -100,45 +103,108 @@ export default {
         book.private = isPrivate;
       });
       if (isPrivate) {
-        this.simpleToast(this.$t("shelf.setPrivateSuccess")).show(); // 调用通用消息组件
+        this.simpleToast(this.$t("shelf.setPrivateSuccess")); // 调用通用消息组件
       } else {
-        this.simpleToast(this.$t("shelf.closePrivateSuccess")).show();
+        this.simpleToast(this.$t("shelf.closePrivateSuccess"));
       }
       this.Oncomplete();
     },
-    // 开始下载
-    setDownLoad() {
-      let isDownLoad;
-      if (this.isDownLoad) {
-        isDownLoad = false;
-      } else {
-        isDownLoad = true;
-      }
-      // 设置书籍的缓存属性
-      this.shelfSelected.forEach(book => {
-        book.cache = isDownLoad;
-      });
-      this.downLoadBook();
-      if (isDownLoad) {
-        this.simpleToast(this.$t("shelf.setDownloadSuccess")).show();
-      } else {
-        this.simpleToast(this.$t("shelf.removeDownloadSuccess")).show();
-      }
-      this.Oncomplete();
-    },
+
     // 下载图书
-    downLoadBook() {},
+    async downLoadSelectedBook() {
+      // 遍历我们的选择图书
+      for (var i = 0; i < this.shelfSelected.length; i++) {
+        // 这里的then后面的回调函数是等下面的 downloadBook方法调用resolve才执行!
+        await this.downloadBook(this.shelfSelected[i]).then(book => {
+          // 让选中的图书的cache属性为true表示已经下载
+          book.cache = true;
+        });
+      }
+    },
+
+    // 下载具体书籍
+    downloadBook(book) {
+      let text = "";
+      let toast = this.simpleToast(text);
+      toast.continueShow(); //持续显示
+      // 这里return Promise是为了给上面的调用downloadBook时方便
+      return new Promise((resolve, reject) => {
+        download(
+          book,
+          book => {
+            // 这里要使用vue-create-api提供的方法 remove()
+            // 不然的话我们上面传递的text一直保留着,不能传递第二个text进去
+            toast.remove();
+            // 开始执行 .then()的第一个回调,并且把book作为参数传递进去
+            resolve(book);
+          },
+          reject,
+          // 这是 download 方法的第四个参数,传递给 axios 的 onDownloadProgress持续监听
+          progressEvent => {
+            let progress = Math.floor(
+              (progressEvent.loaded / progressEvent.total) * 100
+            );
+            // text是进度计算 下载百分比
+            text = this.$t("shelf.progressDownload").replace(
+              "$1",
+              `${book.fileName}.epub(${progress}%)`
+            );
+            toast.changeText(text); //组件内部的方法
+          }
+        );
+      });
+    },
+
+    // 删除缓存图书
+    removeSelectedBook() {
+      Promise.all(this.shelfSelected.map(book => this.removeBook(book))).then(
+        books => {
+          // Promise.all()可以将多个Promise实例包装成一个新的Promise实例
+          // 成功的时候返回的是一个结果数组，把每个Promise实例的结果放到一个数组中
+          books.map(book => {
+            book.cache = false;
+          });
+          saveBookShelf(this.shelfList);  // 把当前选中的书籍报存到 localStorage中去
+          this.simpleToast(this.$t("shelf.removeDownloadSuccess"));
+        }
+      );
+    },
+    // 调用 localForage 删除本地缓存
+    removeBook(book) {
+      return new Promise((resolve, reject) => {
+        // 顺便也把本地 localStorage 数据也删除
+        removeLocalStorage(`${book.categoryText}/${book.fileName}-info`);
+        removeLocalForage(`${book.fileName}`);
+        resolve(book);
+      });
+    },
+    // 设置下载
+    async setDownLoad() {
+      this.Oncomplete();
+      if (this.isDownLoad) {
+        this.removeSelectedBook(); // 删除缓存图书
+      } else {
+        // 这里要使用 await 同步化,不然的话上面的还在下载,下面的就把上面的信息给覆盖了
+        await this.downLoadSelectedBook();
+        saveBookShelf(this.shelfList);
+        this.simpleToast(this.$t("shelf.setDownloadSuccess"));
+      }
+    },
+
     // 移除图书
     removeSelected() {
-      // 设置并过滤到我们选中的数据
+      // 设置并过滤到我们选中的数据 
+      // 将我们选中的数组的每一项和我们的所有数据进行比对,如果相同则删除
       this.shelfSelected.forEach(selected => {
+        // 保存到vuex中
         this.setShelfList(
           this.shelfList.filter(book => {
             return book != selected;
           })
         );
+        console.log(this.shelfList,'6666')
       });
-      this.setShelfSelected([]);  // 设置选中图书暑假为空
+      this.setShelfSelected([]); // 设置选中图书暑假为空
       this.Oncomplete();
     },
     // 显示私密弹出窗口
@@ -259,6 +325,30 @@ export default {
     }
   }
 };
+
+// Promise 中的 resolve 是指成功后的回调函数!!
+// 是把 resolve中的参数传递给 then()中的第一个函数的参数!!!
+/*
+      functionA() {
+        this.functionB().then(() => {
+          console.log(111);
+        });
+      },
+      functionB() {
+        let b = 1;
+        return new Promise((resolve, reject) => {
+          this.functionC(b, b => {
+            resolve();
+          });
+        });
+      },
+      functionC(par, onSuccess, onErr) {
+        if (onSuccess) {
+          // onSuccess();
+          console.log(111111);
+        }
+      },
+  */
 </script>
 
 
@@ -308,3 +398,4 @@ export default {
   }
 }
 </style>
+

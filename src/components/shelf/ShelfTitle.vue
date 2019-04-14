@@ -6,7 +6,7 @@
         <span class="shelf-title-sub-text" v-show="isEditMode">{{selectedText}}</span>
       </div>
       <div class="shelf-title-btn-wrapper shelf-title-left">
-        <div class="shelf-title-btn-text" @click="clearCache">{{$t('shelf.clearCache')}}</div>
+        <div class="shelf-title-btn-text" @click.stop="clearCache()">{{$t('shelf.clearCache')}}</div>
       </div>
       <!-- 编辑按钮 -->
       <div class="shelf-title-btn-wrapper shelf-title-right">
@@ -21,6 +21,11 @@
 
 <script>
 import { storeShelfMixin } from "@/utils/mixin.js";
+import { deleteLocalStorage } from "@/utils/localStorage.js";
+import { clearLocalForage } from "@/utils/localForage.js";
+import { shelf } from "@/api/store.js"; //这个是通过接口获取数据的!
+import { AddToShelf } from "@/utils/store.js";
+import { getBookShelf, saveBookShelf } from "@/utils/localStorage.js";
 export default {
   mixins: [storeShelfMixin],
   computed: {
@@ -51,7 +56,23 @@ export default {
       }
       this.setIsEditMode(!this.isEditMode);
     },
-    clearCache() {}
+    // 清除缓存
+    clearCache() {
+      // 清空 localStorage 和 localForage
+      deleteLocalStorage();
+      clearLocalForage();
+      this.setShelfSelected([]); // 设置选中集合为空
+      this.setShelfList([]); // 设置源数据集合为空
+      // 接着再通过接口获取数据
+      shelf().then(res => {
+        if (res && res.data && res.data.bookList) {
+          let shelfList = AddToShelf(res.data.bookList); //新增一个type为3的数据
+          saveBookShelf(shelfList); //保存到localStorage中去
+          this.setShelfList(shelfList); //保存到vuex中去
+        }
+      });
+      this.simpleToast(this.$t("shelf.clearCacheSuccess"));
+    }
   }
 };
 </script>

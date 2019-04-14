@@ -18,6 +18,7 @@
 import Epub from "epubjs";
 global.ePub = Epub;
 import { bookMixin } from "@/utils/mixin.js";
+import {getLocalForage} from '@/utils/localForage.js';
 import {
   getFontSize,
   getFontFamily,
@@ -341,10 +342,9 @@ export default {
     },
 
     // 初始化电子书
-    initBook(name) {
-      //  获取资源路径
-      const url = "http://127.0.0.1:8081/epub/" + name + ".epub";
-      //   实例化一个 Book对象
+    initBook(url) {
+      // 实例化一个 Book对象
+      // epubjs允许我们传入一个url地址或者是一个blob对象(indexDB数据库有保存)
       this.book = new Epub(url);
       this.setCurrentBook(this.book);
       this.initRendition();
@@ -401,14 +401,27 @@ export default {
   },
   mounted() {
     //  通过动态路由获取电子书的路径
-    const filename = this.$route.params.fileName.split("|").join("/");
-    // 存放到 vuex 中 我们在vuex中的actions返回的是一个 Promise对象性
-    // this.$store.dispatch("setFileName", filename).then(() => {
-    //   this.initBook(this.fileName);
-    // });
-    // 使用 mixin 和 抽离 mapActions 的方法
-    this.setFileName(filename).then(() => {
-      this.initBook(this.fileName);
+    const books = this.$route.params.fileName.split("|");
+    const fileName = books[1]; // 为的是获取fileName然后去indexDB中根据键名来或者键值
+    getLocalForage(fileName, (err, blob) => {
+      if (!err && blob) {
+        console.log("离线的");
+        this.setFileName(books.join("/")).then(() => {
+          this.initBook(blob);
+        });
+      } else {
+        // 存放到 vuex 中 我们在vuex中的actions返回的是一个 Promise对象性
+        // this.$store.dispatch("setFileName", filename).then(() => {
+        //   this.initBook(this.fileName);
+        // });
+        console.log("在线的");
+        // 使用 mixin 和 抽离 mapActions 的方法
+        this.setFileName(books.join("/")).then(() => {
+          //  获取资源路径
+          const url = `${process.env.VUE_APP_Resource_Url}/epub/` + this.fileName + ".epub";
+          this.initBook(url);
+        });
+      }
     });
   }
 };

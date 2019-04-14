@@ -54,8 +54,6 @@
 <script>
 import { setLocalStorage } from "../../utils/localStorage";
 import { storeShelfMixin } from "../../utils/mixin";
-import {shelf} from '@/api/store.js';
-import {AddToShelf} from '@/utils/store.js';
 export default {
   mixins: [storeShelfMixin],
   data() {
@@ -88,16 +86,7 @@ export default {
     }
   },
   methods: {
-    // 获取图片列表数据
-    getShelfList(){
-      shelf().then((res)=>{
-        if(res && res.data && res.data.bookList){
-          // 调用 vuex 中的方法保存mock数据
-          // 增加一个类型为3的数据
-          this.setShelfList(AddToShelf(res.data.bookList));
-        }
-      })
-    },
+
     onTabClick(id){
       this.selectedTab = id; 
     },
@@ -126,9 +115,7 @@ export default {
       this.setShelfTitleVisible(true);
     }
   },
-  mounted() {
-    this.getShelfList();
-  },
+
 };
 </script>
 

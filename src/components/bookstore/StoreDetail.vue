@@ -2,13 +2,7 @@
   <div class="book-detail">
     <detail-title ref="title"></detail-title>
     <scroll class="content-wrapper" :top="40" :bottom="52" ref="scroll" @onScroll="onScroll">
-      <book-info
-        :bookItem="bookItem"
-        :cover="cover"
-        :title="title"
-        :author="author"
-        :desc="desc"
-      ></book-info>
+      <book-info :bookItem="bookItem" :cover="cover" :title="title" :author="author" :desc="desc"></book-info>
       <!-- 版权信息 -->
       <div class="book-detail-content-wrapper">
         <div class="book-detail-content-title">{{$t('detail.copyright')}}</div>
@@ -112,6 +106,7 @@ export default {
     };
   },
   computed: {
+    // 将电子书目录转为一维数组
     flatNavigation() {
       if (this.navigation) {
         return Array.prototype.concat.apply(
@@ -125,15 +120,19 @@ export default {
         return [];
       }
     },
+    // 获取电子书语种
     lang() {
       return this.metadata ? this.metadata.language : "-";
     },
+    // 获取电子书isbn
     isbn() {
       return this.metadata ? this.metadata.identifier : "-";
     },
+    // 获取电子书出版社
     publisher() {
       return this.metadata ? this.metadata.publisher : "-";
     },
+    // 获取电子书摘要
     desc() {
       if (this.description) {
         return this.description.substring(0, 100);
@@ -141,19 +140,24 @@ export default {
         return "";
       }
     },
+    // 获取电子书书名
     title() {
       return this.metadata ? this.metadata.title : "";
     },
+    // 获取电子书作者
     author() {
       return this.metadata ? this.metadata.creator : "";
     },
+    // 判断当前的电子书是否存在于书架
     inBookShelf() {
       if (this.bookItem && this.bookShelf) {
+        // 定义一个自执行函数，将书架转为一维数组结构，并且只保留type为1的数据（type=1的为电子书）
         const flatShelf = (function flatten(arr) {
           return [].concat(
             ...arr.map(v => (v.itemList ? [v, ...flatten(v.itemList)] : v))
           );
         })(this.bookShelf).filter(item => item.type === 1);
+        // 查找当前电子书是否存在于书架
         const book = flatShelf.filter(
           item => item.fileName === this.bookItem.fileName
         );
@@ -171,35 +175,45 @@ export default {
   },
   methods: {
     addOrRemoveShelf() {
+      // 如果电子书存在于书架，则从书架中移除电子书
       if (this.inBookShelf) {
         removeFromBookShelf(this.bookItem);
       } else {
+        // 如果电子书不存在于书架，则添加电子书到书架
         addToShelf(this.bookItem);
       }
       this.bookShelf = getLocalStorage("bookShelf");
     },
+    // 展示Toast弹窗
     showToast(text) {
       this.toastText = text;
       this.$refs.toast.show();
     },
+    // 阅读电子书
     readBook() {
-      getLocalForage(this.bookItem.fileName, (err, value) => {
-        if (!err && value instanceof Blob) {
-          this.$router.push({
-            path: `/ebook/${this.bookItem.fileName}`
-          });
-        } else {
-          // this.showToast(this.$t('shelf.downloadFirst'))
-          this.$router.push({
-            path: `/ebook/${this.bookItem.fileName}`,
-            query: {
-              opf: this.opf
-            }
-          });
-        }
+      // getLocalForage(this.bookItem.fileName, (err, value) => {
+      //   if (!err && value instanceof Blob) {
+      //     this.$router.push({
+      //       path: `/ebook/${this.bookItem.categoryText}|${this.fileName}`
+      //     });
+      //   } else {
+      //     // this.showToast(this.$t('shelf.downloadFirst'))
+      //     this.$router.push({
+      //       path: `/ebook/${this.bookItem.fileName}`,
+      //       query: {
+      //         opf: this.opf
+      //       }
+      //     });
+      //   }
+      // });
+      this.$router.push({
+        // 跳转到阅读器页面
+        path: `/ebook/${this.bookItem.categoryText}|${this.fileName}`
       });
     },
+    // 听书
     trialListening() {
+      // 如果电子书已经缓存，从IndexedDB中读取电子书
       getLocalForage(this.bookItem.fileName, (err, value) => {
         if (!err && value instanceof Blob) {
           this.$router.push({
@@ -209,6 +223,7 @@ export default {
             }
           });
         } else {
+          // 如果没有缓存，直接跳转到听书页面
           // this.showToast(this.$t('shelf.downloadFirst'))
           this.$router.push({
             path: "/book-store/book-speaking",
@@ -220,34 +235,42 @@ export default {
         }
       });
     },
-    // 跳转去阅读
+    // 通过章节阅读电子书
     read(item) {
-      getLocalForage(this.bookItem.fileName, (err, value) => {
-        if (!err && value instanceof Blob) {
-          console.log('666')
-          this.$router.push({
-            path: `/ebook/${this.bookItem.fileName}`,
-            query: {
-              navigation: item.href
-            }
-          });
-        } else {
-          // this.showToast(this.$t('shelf.downloadFirst'))
-          this.$router.push({
-            path: `/ebook/${this.bookItem.fileName}`,
-            query: {
-              navigation: item.href,
-              opf: this.opf
-            }
-          });
+      // getLocalForage(this.bookItem.fileName, (err, value) => {
+      //   if (!err && value instanceof Blob) {
+      //     console.log("666");
+      //     this.$router.push({
+      //       path: `/ebook/${this.bookItem.fileName}`,
+      //       query: {
+      //         navigation: item.href
+      //       }
+      //     });
+      //   } else {
+      //     // this.showToast(this.$t('shelf.downloadFirst'))
+      //     this.$router.push({
+      //       path: `/ebook/${this.bookItem.fileName}`,
+      //       query: {
+      //         navigation: item.href,
+      //         opf: this.opf
+      //       }
+      //     });
+      //   }
+      // });
+      this.$router.push({
+        path: `/ebook/${this.categoryText}|${this.fileName}`,
+        query: {
+          href: item.href
         }
       });
     },
+    // 电子书目录缩进样式
     itemStyle(item) {
       return {
         marginLeft: (item.deep - 1) * px2rem(20) + "rem"
       };
     },
+    // 将目录从多维转为一维
     doFlatNavigation(content, deep = 1) {
       const arr = [];
       content.forEach(item => {
@@ -277,7 +300,7 @@ export default {
         }
       }
     },
-    // 解析书本
+    // 解析电子书
     parseBook(url) {
       // 解析一本电子书除了使用下载url还可以使用 opf
       this.book = new Epub(url);
@@ -289,25 +312,37 @@ export default {
       this.book.loaded.navigation.then(nav => {
         this.navigation = nav;
         // nav下有个属性 toc数组,里面存放了目录信息
-        if (this.navigation.toc && this.navigation.toc.length > 1) {
+        // 通过第二章的目录（第一章通常是封面，所以获取第二章）
+        if (
+          this.navigation.toc &&
+          this.navigation.toc.length > 1 &&
+          this.navigation.toc[1]
+        ) {
           // this.navigation.toc[1].href是一个A332689_1_En_9_ChapterPart3.html地址
           // 调用 book实例的 display 方法可以渲染到页面上
-          this.display(this.navigation.toc[1].href).then(section => {
-            if (this.$refs.scroll) {
-              this.$refs.scroll.refresh();
-            }
-            this.displayed = true;
-            const reg = new RegExp("<.+?>", "g");
-            // 获取首页文字作为简要描述
-            const text = section.output.replace(reg, "").replace(/\s\s/g, "");
-            this.description = text;
-          });
+          // 将第二章进行渲染（渲染的内容隐藏在屏幕外，用户是看不见的）
+          if (this.display(this.navigation.toc[1].href)) {
+            this.display(this.navigation.toc[1].href).then(section => {
+              if (this.$refs.scroll) {
+                this.$refs.scroll.refresh();
+              }
+              this.displayed = true;
+              // 渲染成功后通过section获取HTML文本，将HTML标签进行替换，提取纯文本信息
+              const reg = new RegExp("<.+?>", "g");
+              // 获取首页文字作为简要描述
+              const text = section.output.replace(reg, "").replace(/\s\s/g, "");
+              // 将纯文本信息保存到description变量中，用于进行摘要信息展示
+              this.description = text;
+            });
+          }
         }
       });
     },
     // 初始化
     init() {
+      // 获取电子书书名
       this.fileName = this.$route.query.fileName;
+      // 获取电子书分类
       this.categoryText = this.$route.query.category;
       if (this.fileName) {
         // 我们封装的 detail 方法去请求线上地址的数据
@@ -321,13 +356,15 @@ export default {
               rootFile = rootFile.substring(1, rootFile.length);
             }
             // 一个线上接口,把所有电子书解压成opf格式
+            // 根据rootFile拼接出opf文件路径
             this.opf = `${process.env.VUE_APP_EPUB_OPF_URL}/${
               this.fileName
             }/${rootFile}`;
             // 去解析
             this.parseBook(this.opf);
           } else {
-            this.showToast(response.data.msg)
+            // 请求失败时打印错误提示
+            this.showToast(response.data.msg);
           }
         });
       }

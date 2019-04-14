@@ -15,11 +15,12 @@
 
 
 <script>
-import {bookMixin} from '@/utils/mixin.js';
+import { bookMixin } from "@/utils/mixin.js";
 export default {
-  mixins:[bookMixin],
+  mixins: [bookMixin],
   methods: {
     back() {
+      this.$router.go(-1);
     }
   }
 };
